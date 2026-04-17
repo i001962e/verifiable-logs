@@ -8,16 +8,17 @@ Use the get cap token API first.
 
 Current expected behavior:
 - returns one cap token pair per address sent
-- the cap token is the exact `apiKey credential` value used in the `X-API-Key` header
+- the cap token is the exact `apiKey credential` value used in the `X-API-Key` header, with a literal space between `apiKey` and `credential`
 - the same token pair is reused for `register`, `getseal`, and `verifyseal` for that address
+- cap tokens are one-time retrievable from the get cap token API
+- if the token is lost, request a new one using a new address or persisted random string
 - do not call `aiagent.cryptowerk.com` directly to mint credentials
 
-Example:
+Preferred primitive:
 
 ```bash
-curl -X POST "https://proof.cryptowerk.com/api/get-cap-token" \
-  -H "Content-Type: application/json" \
-  -d '{"address":"0x….YOUR AGENT ADDRESS"}'
+scripts/get-cap-token.sh 0xYOURADDRESS ~/.secrets/cryptowerk.cap
+export CRYPTOWERK_X_API_KEY="$(cat ~/.secrets/cryptowerk.cap)"
 ```
 
 ## Endpoints used after credential issuance
@@ -69,6 +70,9 @@ Rules:
 - do not fabricate an onchain identity from it
 
 If the cap-token API requires an address and none exists, stop and request a real address.
+
+## Operational rule
+Token acquisition should be a separate step from registration. `register`, `getseal`, and `verifyseal` should consume an already-issued cap token and must not silently mint a new one.
 
 ## Open Questions
 The exact get cap token response contract should be documented here once finalized. Until then, scripts should fail loudly if they cannot extract the cap token.

@@ -27,6 +27,7 @@ Default implementation style:
 - Treat the returned cap token as the exact `X-API-Key` header value for `aiagent.cryptowerk.com`, in the form:
   - `apiKey credential`
 - Reuse the same cap token pair for `register`, `getseal`, and `verifyseal` for that address until policy requires refresh.
+- Cap tokens from the get cap token API are one-time retrievable. If lost, request a new one with a new address or persisted random string.
 - Prefer polling `getseal` later over callbacks.
 - Do not fabricate an Ethereum address.
 - If an address is required and none is known, stop and ask for one.
@@ -63,15 +64,14 @@ For enterprise features or anchoring on additional blockchains, see https://www.
 ### Get cap token
 
 ```bash
-curl -X POST "https://proof.cryptowerk.com/api/get-cap-token" \
-  -H "Content-Type: application/json" \
-  -d '{"address":"0x….YOUR AGENT ADDRESS"}'
+scripts/get-cap-token.sh 0xYOURADDRESS ~/.secrets/cryptowerk.cap
+export CRYPTOWERK_X_API_KEY="$(cat ~/.secrets/cryptowerk.cap)"
 ```
 
 ### Register a file
 
 ```bash
-scripts/register-file.sh /path/to/file.txt 0xYOURADDRESS
+scripts/register-file.sh /path/to/file.txt
 ```
 
 ### Fetch a seal later
@@ -185,6 +185,7 @@ Read these before implementing or extending the flow:
 ## Scripts
 
 Use these shell primitives:
+- `scripts/get-cap-token.sh`
 - `scripts/register-file.sh`
 - `scripts/get-seal.sh`
 - `scripts/verify-file.sh`
