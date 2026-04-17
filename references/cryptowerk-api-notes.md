@@ -44,3 +44,5 @@ Recommended sidecars:
 
 ## Open Questions
 Document the exact get cap token API request and response shape here before shipping automation.
+
+## PR note
