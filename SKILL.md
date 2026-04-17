@@ -1,6 +1,6 @@
 ---
 name: verifiable-logs
-description: Create and operate verifiable log workflows backed by Cryptowerk sealing. Use when building a skill or workflow that watches files or log streams, hashes stable content with SHA-256, obtains Cryptowerk capability credentials from the get cap token API, registers hashes, stores retrieval IDs and seals, and verifies proofs without calling aiagent.cryptowerk.com directly.
+description: Create and operate verifiable log workflows backed by Cryptowerk sealing. Use when building a skill or workflow that watches files or log streams, hashes stable content with SHA-256, obtains a capability token from the get cap token API, treats that token as the `apiKey credential` pair for `aiagent.cryptowerk.com`, registers hashes, stores retrieval IDs and seals, and verifies proofs.
 ---
 
 # Verifiable Logs
@@ -16,7 +16,7 @@ Use this skill to:
 - persist retrieval IDs, seal objects, and local metadata
 - verify seals against re-hashed content
 
-Do not call `aiagent.cryptowerk.com` directly for credential issuance. Use the get cap token API first, then use the returned key and credential for Cryptowerk API calls.
+Do not call `aiagent.cryptowerk.com` directly for credential issuance. Use the get cap token API first. Treat the returned cap token as the `apiKey` plus space plus `credential` value required by `aiagent.cryptowerk.com` for `register`, `getseal`, and `verifyseal` calls.
 
 ## Required Layout
 
@@ -36,7 +36,7 @@ verifiable-logs/
 1. Observe a target file or log append event
 2. Wait until the target is stable
 3. Compute SHA-256 over raw bytes
-4. Obtain Cryptowerk capability credentials from the get cap token API
+4. Obtain the Cryptowerk cap token from the get cap token API
 5. Register the hash with Cryptowerk
 6. Persist the retrieval ID locally
 7. Fetch or receive the seal object
@@ -59,14 +59,21 @@ Ignore:
 ## Credential Issuance
 
 ### Rule
-Use the get cap token API to obtain capability credentials before Cryptowerk register, getseal, or verifyseal calls.
+Use the get cap token API before any Cryptowerk `register`, `getseal`, or `verifyseal` call.
+
+Treat the returned cap token as the exact `X-API-Key` header value for `aiagent.cryptowerk.com`, in the form:
+
+`apiKey credential`
+
+There is one cap token pair per address sent. Reuse that token pair for `register`, `getseal`, and `verifyseal` for that address until API policy requires rotation or refresh.
 
 ### Requirements
-- persist the returned key material securely
+- persist the returned cap token securely
 - use `0600` permissions for stored secrets
-- never log credentials
-- never echo credentials into chat
-- refresh credentials according to API policy
+- never log the cap token
+- never echo the cap token into chat
+- associate the token with the address it was issued for
+- refresh only according to API policy
 
 If the get cap token API shape is not already documented locally, pause and add it under `references/` before automating writes.
 

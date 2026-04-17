@@ -7,8 +7,9 @@ Reference notes for the verifiable-logs skill.
 Use the get cap token API first.
 
 Expected behavior:
-- returns Cryptowerk API key material
-- caller uses returned key and credential for Cryptowerk API calls
+- returns one cap token pair per address sent
+- the cap token is the exact `apiKey credential` value used in the `X-API-Key` header
+- the same token pair is reused for `register`, `getseal`, and `verifyseal` for that address
 - do not call `aiagent.cryptowerk.com` directly to mint credentials
 
 ## Endpoints used after credential issuance
