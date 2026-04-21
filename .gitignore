@@ -1,0 +1,7 @@
+*.cw.json
+*.rid
+*.seal
+*.sig
+*.verify.json
+__pycache__/
+tmp/
