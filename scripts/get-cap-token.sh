@@ -24,7 +24,7 @@ print(json.dumps({"address": sys.argv[1]}, separators=(",", ":")))
 PY
 )
 
-RESPONSE=$($CURL_BIN --silent --show-error --fail-with-body -X POST "https://proof.cryptowerk.com/api/get-cap-token" \
+RESPONSE=$($CURL_BIN --silent --show-error --fail-with-body -X POST "https://www.cryptowerk.com/api/get-cap-token" \
   -H "Content-Type: application/json" \
   -d "$REQUEST_BODY")
 
